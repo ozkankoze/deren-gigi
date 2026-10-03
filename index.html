@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DEREN GIGI</title>
+<meta name="description" content="Deren Gigi — deep house. Get into the rhythm with me, I don't know where we're going.">
+<meta name="theme-color" content="#05060a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2386f0ff'/%3E%3Cstop offset='.5' stop-color='%23b9a6ff'/%3E%3Cstop offset='1' stop-color='%23ff7ad9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%2305060a'/%3E%3Ccircle cx='32' cy='32' r='18' fill='url(%23g)'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DEREN GIGI">
+<meta property="og:description" content="Deep house. Get into the rhythm with me, I don't know where we're going.">
+<meta property="og:image" content="/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;600;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+html,body{margin:0}img{max-width:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* Layout: a receiver in deep space. Fixed WebGL liquid-chrome core behind a HUD; scroll through: launch → frequency tuner (tracks as stations) → transmission log → uplinks. Single dark world by choice. */
+:root{
+  --void:#05060a;
+  --panel:rgba(12,14,22,.55);
+  --edge:rgba(160,200,255,.16);
+  --ink:#e9edf5;
+  --dim:#7a8297;
+  --ion:#86f0ff;
+  --flare:#ff7ad9;
+  --sun:#ffb38a;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--void)}
+body{background:var(--void);color:var(--ink);font-family:var(--mono);font-size:14px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+::selection{background:var(--flare);color:var(--void)}
+:focus-visible{outline:1px solid var(--ion);outline-offset:4px}
+
+#core{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+.scan{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.025) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 90% at 60% 45%,transparent 40%,rgba(5,6,10,.85) 100%)}
+
+.ui{position:relative;z-index:2}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:clamp(16px,4vw,48px)}
+.label{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+.label b{color:var(--ion);font-weight:500}
+.iri{background:linear-gradient(100deg,var(--ion) 0%,#b9a6ff 35%,var(--flare) 65%,var(--sun) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* HUD bar */
+.hud{position:fixed;left:0;right:0;top:0;z-index:4;padding-top:calc(env(safe-area-inset-top,0px) + 14px);pointer-events:none}
+.hud .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.hud a,.hud button{pointer-events:auto}
+.logo{font-family:var(--display);font-weight:900;font-size:13px;letter-spacing:.18em;text-decoration:none}
+.hud-mid{display:flex;gap:22px}
+.hud-mid span{white-space:nowrap}
+.engage{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);background:var(--panel);border:1px solid var(--edge);padding:9px 14px 9px 12px;border-radius:2px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.engage:hover{border-color:var(--ion)}
+.bars{display:inline-flex;gap:2px;align-items:flex-end;height:12px}
+.bars i{width:2px;height:3px;background:var(--dim);transition:height .08s}
+.engage.on .bars i{background:var(--ion)}
+
+/* launch */
+.launch{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding-block:120px clamp(40px,7vh,72px)}
+.coords{display:flex;flex-wrap:wrap;gap:8px 28px;margin-bottom:26px}
+h1{font-family:var(--display);font-weight:900;font-size:clamp(56px,13.5vw,220px);line-height:.82;letter-spacing:-.045em;margin:0;text-transform:uppercase}
+h1 .l2{display:block;padding-left:.9em}
+h1 .thin{font-weight:300}
+.launch-foot{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;margin-top:34px;border-top:1px solid var(--edge);padding-top:20px}
+.dest{font-family:var(--display);font-weight:600;font-size:clamp(15px,1.7vw,20px);letter-spacing:.02em;max-width:34ch;margin:0}
+.dest small{display:block;font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.22em;color:var(--dim);margin-bottom:8px}
+.scrollcue{display:flex;align-items:center;gap:10px;text-decoration:none}
+.scrollcue i{display:block;width:1px;height:42px;background:linear-gradient(var(--ion),transparent);animation:drip 2.2s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(.2);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}100%{transform:scaleY(.2);transform-origin:bottom}}
+
+/* sections */
+section{padding-block:clamp(80px,12vw,160px)}
+.sec-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:40px}
+h2{font-family:var(--display);font-weight:900;font-size:clamp(36px,6vw,84px);letter-spacing:-.04em;line-height:.9;margin:8px 0 0;text-transform:uppercase}
+
+/* tuner */
+.receiver{border:1px solid var(--edge);background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:3px;overflow:hidden}
+.readout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);border-bottom:1px solid var(--edge)}
+.now{padding:clamp(22px,4vw,44px);min-width:0;border-right:1px solid var(--edge)}
+.freq{font-family:var(--display);font-weight:300;font-size:clamp(20px,2.4vw,28px);letter-spacing:.04em;color:var(--ion);font-variant-numeric:tabular-nums}
+.freq span{font-size:.5em;color:var(--dim);margin-left:6px;letter-spacing:.2em}
+.now{container-type:inline-size}
+.title{font-family:var(--display);font-weight:900;font-size:clamp(30px,8.2cqi,112px);line-height:.9;letter-spacing:-.04em;text-transform:uppercase;margin:14px 0 22px;overflow-wrap:anywhere;min-height:.9em}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.tx{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;padding:12px 16px;border:1px solid var(--edge);border-radius:2px;display:inline-flex;gap:10px;align-items:center;transition:border-color .2s,background .2s}
+.tx:hover{border-color:var(--ion);background:rgba(134,240,255,.06)}
+.tx.solid{background:var(--ink);color:var(--void);border-color:var(--ink)}
+.tx.solid:hover{background:var(--ion);border-color:var(--ion)}
+.meta{display:grid;grid-template-columns:1fr 1fr;align-content:start}
+.meta div{padding:clamp(16px,2.4vw,26px);border-bottom:1px solid var(--edge);min-width:0}
+.meta div:nth-child(odd){border-right:1px solid var(--edge)}
+.meta dt{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+.meta dd{margin:6px 0 0;font-family:var(--display);font-weight:600;font-size:clamp(18px,2vw,24px);font-variant-numeric:tabular-nums}
+.spectrum{grid-column:1/-1;border-bottom:none!important;display:flex;align-items:flex-end;gap:3px;height:96px}
+.spectrum i{flex:1;background:linear-gradient(to top,var(--flare),var(--ion));opacity:.8;height:4%;transition:height .09s linear;min-width:2px}
+
+.dial{position:relative;height:118px;overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.dial:active{cursor:grabbing}
+.strip{position:absolute;top:0;bottom:0;left:50%;will-change:transform}
+.tick{position:absolute;bottom:34px;width:1px;background:var(--dim);opacity:.45}
+.tick.major{opacity:.9;height:22px}
+.tick:not(.major){height:10px}
+.tnum{position:absolute;bottom:12px;transform:translateX(-50%);font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums}
+.station{position:absolute;top:14px;transform:translateX(-50%);background:none;border:0;padding:4px 6px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);cursor:pointer;white-space:nowrap}
+.station::after{content:"";display:block;width:5px;height:5px;border-radius:50%;background:currentColor;margin:6px auto 0}
+.station.active{color:var(--ink)}
+.station.active::after{background:var(--flare);box-shadow:0 0 12px var(--flare)}
+.needle{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--flare);box-shadow:0 0 14px var(--flare);pointer-events:none}
+.needle::before{content:"";position:absolute;top:0;left:-5px;border:5px solid transparent;border-top-color:var(--flare)}
+.dial-help{display:flex;justify-content:space-between;gap:12px;padding:12px clamp(16px,2.4vw,26px);border-top:1px solid var(--edge);flex-wrap:wrap}
+.dial-help button{background:none;border:1px solid var(--edge);color:var(--ink);font-family:var(--mono);font-size:11px;letter-spacing:.18em;padding:6px 12px;cursor:pointer;border-radius:2px}
+.dial-help button:hover{border-color:var(--ion)}
+
+/* log */
+.log{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:clamp(32px,6vw,96px);align-items:start}
+.big{font-family:var(--display);font-weight:600;font-size:clamp(26px,3.6vw,48px);line-height:1.08;letter-spacing:-.025em;margin:16px 0 0;text-wrap:balance}
+.term{border:1px solid var(--edge);background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:clamp(20px,3vw,32px);border-radius:3px;font-size:13px}
+.term p{margin:0 0 12px;color:#c2c8d6;max-width:62ch}
+.term p::before{content:attr(data-t);color:var(--dim);margin-right:12px;font-variant-numeric:tabular-nums}
+.term .cur{display:inline-block;width:8px;height:14px;background:var(--ion);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--edge);margin-top:20px;padding-top:18px;gap:12px}
+.stats b{display:block;font-family:var(--display);font-weight:900;font-size:clamp(22px,3vw,34px);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+
+/* uplinks */
+.uplinks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:1100px){.uplinks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.up{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:48px;padding:clamp(20px,3vw,32px);min-height:230px;text-decoration:none;border:1px solid var(--edge);background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:3px;overflow:hidden;transition:border-color .3s,transform .3s}
+.up::before{content:"";position:absolute;inset:-1px;background:linear-gradient(120deg,var(--ion),#b9a6ff,var(--flare),var(--sun));opacity:0;transition:opacity .35s;z-index:-1;mix-blend-mode:screen}
+.up:hover{transform:translateY(-4px);border-color:transparent}
+.up:hover::before{opacity:.18}
+.up .row{display:flex;justify-content:space-between;align-items:center}
+.up .row span:last-child{font-size:18px;transition:transform .3s}
+.up:hover .row span:last-child{transform:translate(4px,-4px);color:var(--flare)}
+.up{container-type:inline-size}
+.up h3{font-family:var(--display);font-weight:900;font-size:clamp(18px,9cqi,38px);overflow-wrap:anywhere;letter-spacing:-.03em;margin:0;text-transform:uppercase}
+.up p{margin:6px 0 0;color:var(--dim)}
+
+/* hero ID card */
+.idcard{display:flex;gap:14px;align-items:center;padding:10px 14px 10px 10px;border:1px solid var(--edge);background:var(--panel);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:2px}
+.idcard img{width:64px;height:84px;object-fit:cover;border-radius:1px;filter:saturate(1.3) contrast(1.05)}
+.idcard div{display:flex;flex-direction:column;gap:3px}
+
+/* road interstitial */
+.road{position:relative;padding:0;overflow:hidden;min-height:clamp(420px,80vh,820px);display:flex;align-items:flex-end;border-block:1px solid var(--edge)}
+.road img{position:absolute;inset:-12% 0;width:100%;height:124%;object-fit:cover;filter:contrast(1.1) brightness(.75);will-change:transform}
+.road::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(5,6,10,.95) 0%,rgba(5,6,10,.2) 55%,rgba(5,6,10,.5) 100%)}
+.road .wrap{position:relative;z-index:1;width:100%;padding-block:clamp(40px,7vw,90px)}
+.road h2{font-size:clamp(40px,8.4vw,128px);max-width:12ch}
+.road .label{display:block;margin-bottom:14px}
+
+/* tuner photo */
+.now{position:relative;overflow:hidden;isolation:isolate}
+.now-bg{position:absolute;inset:0;z-index:-1}
+.now-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease;filter:saturate(1.25) contrast(1.05)}
+.now-bg img.show{opacity:.62}
+.now-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(5,6,10,.92) 0%,rgba(5,6,10,.55) 55%,rgba(5,6,10,.15) 100%)}
+.now.glitch .now-bg img.show{animation:rgb .45s steps(6) 1}
+@keyframes rgb{0%{transform:translateX(-14px);filter:hue-rotate(80deg) saturate(2)}30%{transform:translateX(10px) skewX(-4deg)}60%{transform:translateX(-4px);filter:hue-rotate(-60deg)}100%{transform:none}}
+
+/* studio photo in log */
+.studio{position:relative;margin-top:28px;border:1px solid var(--edge);border-radius:3px;overflow:hidden;aspect-ratio:4/5;max-width:420px}
+.studio img{width:100%;height:100%;object-fit:cover;display:block}
+.studio figcaption{position:absolute;left:12px;bottom:10px}
+
+/* footage gallery */
+.reel{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-rows:clamp(90px,11vw,150px);gap:12px}
+.frame{position:relative;overflow:hidden;border:1px solid var(--edge);border-radius:2px;background:#0b0c12;cursor:zoom-in;padding:0;color:inherit;font:inherit;text-align:left}
+.frame img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1) contrast(1.15) brightness(.85);transform:scale(1.04);transition:filter .5s,transform .7s}
+.frame::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(140deg,var(--ion),#7b5cff 45%,var(--flare));mix-blend-mode:color;opacity:.85;transition:opacity .5s;pointer-events:none}
+.frame:hover img,.frame:focus-visible img{filter:none;transform:scale(1)}
+.frame:hover::before,.frame:focus-visible::before{opacity:0}
+.frame .tag{position:absolute;left:10px;bottom:8px;right:10px;z-index:2;display:flex;justify-content:space-between;gap:8px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.frame .crn{position:absolute;inset:8px;z-index:2;pointer-events:none;
+  background:linear-gradient(var(--ink),var(--ink)) top left/10px 1px,linear-gradient(var(--ink),var(--ink)) top left/1px 10px,
+             linear-gradient(var(--ink),var(--ink)) top right/10px 1px,linear-gradient(var(--ink),var(--ink)) top right/1px 10px;background-repeat:no-repeat;opacity:.7}
+.s-a{grid-column:span 5;grid-row:span 4}.s-b{grid-column:span 4;grid-row:span 2}.s-c{grid-column:span 3;grid-row:span 2}
+.s-d{grid-column:span 7;grid-row:span 3}.s-e{grid-column:span 3;grid-row:span 3}.s-f{grid-column:span 4;grid-row:span 3}
+
+.lb{position:fixed;inset:0;z-index:20;background:rgba(5,6,10,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)}
+.lb-top,.lb-bot{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1280px;width:100%;margin:0 auto}
+.lb-stage{display:grid;place-items:center;min-height:0;padding-block:16px}
+.lb-stage img{max-width:100%;max-height:100%;object-fit:contain;border:1px solid var(--edge)}
+.lb-stage img.in{animation:rgb .45s steps(6) 1}
+.lb button{background:none;border:1px solid var(--edge);color:var(--ink);font-family:var(--mono);font-size:11px;letter-spacing:.18em;padding:9px 14px;cursor:pointer;border-radius:2px;text-transform:uppercase}
+.lb button:hover{border-color:var(--ion)}
+
+@media (max-width:820px){
+  .reel{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:clamp(150px,52vw,260px)}
+  .reel .frame{grid-column:span 1;grid-row:span 1}
+  .reel .frame:nth-child(5n+1){grid-column:span 2}
+  .idcard{display:none}
+}
+
+.live{margin-top:28px;display:flex;flex-direction:column;gap:12px}
+.live iframe{border:0;border-radius:12px;display:block;background:#121212}
+footer{position:relative;z-index:2;padding-block:28px calc(28px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--edge)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media (max-width:820px){
+  .hud-mid{display:none}
+  .readout,.log{grid-template-columns:minmax(0,1fr)}
+  .now{border-right:0;border-bottom:1px solid var(--edge)}
+  .uplinks{grid-template-columns:minmax(0,1fr)}
+  .up{min-height:0;gap:28px}
+  .launch-foot{grid-template-columns:minmax(0,1fr)}
+  .scrollcue{display:none}
+  h1 .l2{padding-left:.4em}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<canvas id="core" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="scan" aria-hidden="true"></div>
+
+<div class="hud">
+  <div class="wrap">
+    <a class="logo" href="#top">DRN/GG</a>
+    <div class="hud-mid label">
+      <span>SYS <b>ONLINE</b></span>
+      <span>BPM <b id="bpm">122</b></span>
+      <span>T+ <b id="clock">00:00:00</b></span>
+    </div>
+    <button class="engage" id="engage" type="button" aria-pressed="false">
+      <span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span id="engage-t">Engage sound</span>
+    </button>
+  </div>
+</div>
+
+<div class="ui">
+  <header class="launch wrap" id="top">
+    <div class="coords label">
+      <span>Signal <b>acquired</b></span>
+      <span>Origin <b>Deep house</b></span>
+      <span>Units <b>14</b> transmissions</span>
+      <span>Heading <b id="heading">---°</b></span>
+    </div>
+    <h1 aria-label="Deren Gigi"><span class="iri" data-decode="DEREN">DEREN</span><span class="l2"><span class="thin">/</span><span data-decode="GIGI">GIGI</span></span></h1>
+    <div class="launch-foot">
+      <p class="dest"><small>Destination: unknown</small>Get into the rhythm with me. I don't know where we're going.</p>
+      <div class="idcard">
+        <img src="img/prism-portrait.jpg" alt="Deren Gigi, psychedelic portrait">
+        <div class="label"><span>Subject</span><b>Deren Gigi</b><span>Status <b>transmitting</b></span></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="road" aria-label="Destination unknown">
+    <img id="roadimg" src="img/road-mustang.jpg" alt="Deren Gigi leaning on a white convertible on an empty desert road, black and white">
+    <div class="wrap">
+      <span class="label">Heading · <b>unknown</b></span>
+      <h2>I don't know where <span class="iri">we're going</span></h2>
+    </div>
+  </section>
+
+  <section id="tuner" aria-labelledby="tuner-h">
+    <div class="wrap">
+      <div class="sec-top">
+        <div><span class="label">01 · Receiver</span><h2 id="tuner-h">Tune <span class="iri">the signal</span></h2></div>
+        <span class="label">Drag the dial · ← → keys</span>
+      </div>
+
+      <div class="receiver">
+        <div class="readout">
+          <div class="now" aria-live="polite">
+            <div class="now-bg" aria-hidden="true"><img alt=""><img alt=""></div>
+            <div class="freq"><span id="fq">88.0</span><span>MHz</span></div>
+            <div class="title" id="st-title">Melotte</div>
+            <div class="actions">
+              <a class="tx solid" id="st-link" href="https://open.spotify.com/artist/5aZH1DyyoOZ16zTkTReDdg" target="_blank" rel="noopener">▶ Play on Spotify</a>
+              <a class="tx" href="https://soundcloud.com/derengigi" target="_blank" rel="noopener">SoundCloud ↗</a>
+              <a class="tx" href="https://music.apple.com/tr/artist/deren-gigi/1823895284" target="_blank" rel="noopener">Apple Music ↗</a>
+            </div>
+          </div>
+          <dl class="meta">
+            <div><dt>Length</dt><dd id="st-len">4:07</dd></div>
+            <div><dt>SoundCloud plays</dt><dd id="st-plays">7,032</dd></div>
+            <div><dt>Found on</dt><dd id="st-src">Spotify + SC</dd></div>
+            <div><dt>Channel</dt><dd id="st-ch">01 / 14</dd></div>
+            <div class="spectrum" id="spectrum" aria-hidden="true"></div>
+          </dl>
+        </div>
+        <div class="dial" id="dial" tabindex="0" role="slider" aria-label="Track tuner" aria-valuemin="1" aria-valuemax="14" aria-valuenow="1" aria-valuetext="Melotte">
+          <div class="strip" id="strip"></div>
+          <div class="needle"></div>
+        </div>
+        <div class="dial-help">
+          <button type="button" id="prev" aria-label="Previous track">← PREV</button>
+          <span class="label" id="dial-status">Locked on <b>Melotte</b></span>
+          <button type="button" id="next" aria-label="Next track">NEXT →</button>
+        </div>
+      </div>
+      <div class="live">
+        <span class="label">Live feed · <b>Spotify</b></span>
+        <iframe title="Deren Gigi on Spotify" src="https://open.spotify.com/embed/artist/5aZH1DyyoOZ16zTkTReDdg?utm_source=generator&amp;theme=0" width="100%" height="352" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="log-h">
+    <div class="wrap log">
+      <div>
+        <span class="label" id="log-h">02 · Transmission log</span>
+        <p class="big">Deep house for the drive with <span class="iri">no fixed destination.</span></p>
+        <figure class="studio"><img src="img/studio-attic.jpg" alt="Deren Gigi producing on a laptop in a red attic studio" loading="lazy"><figcaption class="label">REC · <b>the red attic</b></figcaption></figure>
+      </div>
+      <div class="term">
+        <p data-t="00:00">Long, patient grooves. Warm sub, hazy pads, small hooks that surface and vanish.</p>
+        <p data-t="00:14">Every transmission goes out as GIGI on SoundCloud first. The strongest ones reach Spotify.</p>
+        <p data-t="00:31">Current heading: unknown. Keep listening <span class="cur" aria-hidden="true"></span></p>
+        <div class="stats">
+          <div><span class="label">Top signal</span><b>12.5K</b><span class="label">Buffalo</span></div>
+          <div><span class="label">SoundCloud</span><b>14</b><span class="label">tracks</span></div>
+          <div><span class="label">Spotify</span><b>7</b><span class="label">tracks</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="footage" aria-labelledby="ft-h">
+    <div class="wrap">
+      <div class="sec-top">
+        <div><span class="label">03 · Field footage</span><h2 id="ft-h">Recovered <span class="iri">frames</span></h2></div>
+        <span class="label">Hover to restore colour · tap to open</span>
+      </div>
+      <div class="reel" id="reel"></div>
+    </div>
+  </section>
+
+  <section id="uplinks" aria-labelledby="up-h" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-top"><div><span class="label">04 · Uplinks</span><h2 id="up-h">Find Gigi</h2></div></div>
+      <div class="uplinks">
+        <a class="up" href="https://open.spotify.com/artist/5aZH1DyyoOZ16zTkTReDdg" target="_blank" rel="noopener">
+          <div class="row label"><span>CH-A</span><span>↗</span></div>
+          <div><h3>Spotify</h3><p>DEREN GIGI</p></div>
+        </a>
+        <a class="up" href="https://soundcloud.com/derengigi" target="_blank" rel="noopener">
+          <div class="row label"><span>CH-B</span><span>↗</span></div>
+          <div><h3>SoundCloud</h3><p>/derengigi</p></div>
+        </a>
+        <a class="up" href="https://music.apple.com/tr/artist/deren-gigi/1823895284" target="_blank" rel="noopener">
+          <div class="row label"><span>CH-C</span><span>↗</span></div>
+          <div><h3>Apple Music</h3><p>DEREN GIGI</p></div>
+        </a>
+        <a class="up" href="https://www.instagram.com/derenraree" target="_blank" rel="noopener">
+          <div class="row label"><span>CH-D</span><span>↗</span></div>
+          <div><h3>Instagram</h3><p>@derenraree</p></div>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <div class="lb-top"><span class="label" id="lb-cap"></span><button type="button" id="lb-x">Close ✕</button></div>
+  <div class="lb-stage"><img id="lb-img" alt=""></div>
+  <div class="lb-bot"><button type="button" id="lb-p">← Prev</button><span class="label" id="lb-n"></span><button type="button" id="lb-nx">Next →</button></div>
+</div>
+
+<footer>
+  <div class="wrap label"><span>© 2026 Deren Gigi</span><span>End of transmission_</span></div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+var SP="https://open.spotify.com/artist/5aZH1DyyoOZ16zTkTReDdg", SC="https://soundcloud.com/derengigi";
+var stations=[
+  {t:"Melotte",img:"img/beach-violet.jpg",len:"4:07",plays:"7,032",src:"Spotify + SC",hue:.62,root:45},
+  {t:"Nahla",img:"img/tunnel.jpg",len:"3:58",plays:"—",src:"Spotify",hue:.55,root:43},
+  {t:"Rehab",img:"img/night-portrait.jpg",len:"4:23",plays:"—",src:"Spotify",hue:.86,root:41},
+  {t:"Jenga",img:"img/painting.jpg",len:"4:58",plays:"—",src:"Spotify",hue:.05,root:48},
+  {t:"Signal",img:"img/beach-blue.jpg",len:"2:50",plays:"—",src:"Spotify",hue:.48,root:46},
+  {t:"Reuon",img:"img/long-road.jpg",len:"5:20",plays:"—",src:"Spotify + SC",hue:.74,root:40},
+  {t:"Aristo",img:"img/river.jpg",len:"3:47",plays:"5,014",src:"Spotify + SC",hue:.95,root:44},
+  {t:"Buffalo",img:"img/road-mustang.jpg",len:"—",plays:"12.5K",src:"SoundCloud",hue:.12,root:42},
+  {t:"Prhooms",img:"img/prism-portrait.jpg",len:"3:20",plays:"10K",src:"SoundCloud",hue:.38,root:47},
+  {t:"Figure",img:"img/fence-front.jpg",len:"—",plays:"6,077",src:"SoundCloud",hue:.68,root:45},
+  {t:"Longisland",img:"img/beach-grey.jpg",len:"—",plays:"5,555",src:"SoundCloud",hue:.22,root:43},
+  {t:"River",img:"img/fence-side.jpg",len:"—",plays:"—",src:"SoundCloud",hue:.52,root:41},
+  {t:"On Me",img:"img/sofa.jpg",len:"—",plays:"—",src:"SoundCloud",hue:.82,root:46},
+  {t:"Notrecunuts",img:"img/studio-attic.jpg",len:"—",plays:"10",src:"SoundCloud",hue:.0,root:44}
+];
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var GLY="█▓▒░<>/\\_=+*#01";
+function decode(el,txt,dur){
+  if(reduce){el.textContent=txt;return;}
+  var start=performance.now();dur=dur||700;
+  (function f(now){
+    var p=Math.min(1,(now-start)/dur),out="";
+    for(var i=0;i<txt.length;i++){
+      out+= (i/txt.length<p||txt[i]===" ")?txt[i]:GLY[(Math.random()*GLY.length)|0];
+    }
+    el.textContent=out;
+    if(p<1)requestAnimationFrame(f);else el.textContent=txt;
+  })(start);
+}
+document.querySelectorAll("[data-decode]").forEach(function(el,i){setTimeout(function(){decode(el,el.dataset.decode,900)},200+i*250)});
+
+/* ---------- WebGL core ---------- */
+var cv=document.getElementById("core"),gl=cv.getContext("webgl",{antialias:false,premultipliedAlpha:false});
+var U={},state={hue:.62,hueT:.62,beat:0,morph:0,morphT:0,mx:0,my:0,tmx:0,tmy:0,scroll:0};
+var VS="attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
+var FS=[
+"precision highp float;",
+"uniform vec2 R;uniform float T,B,H,M,S;uniform vec2 MO;uniform sampler2D TX;",
+"mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}",
+"float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}",
+"float map(vec3 p){",
+" p.xz*=rot(T*.15+MO.x*.8);p.yz*=rot(MO.y*.6+S*.6);",
+" float w=.16+.12*M;",
+" float d=length(p)-1.05-B*.07;",
+" d+=w*sin(2.6*p.x+T*.7)*sin(2.9*p.y+T*.55)*sin(2.3*p.z+T*.63);",
+" d+=.04*sin(9.*p.y+T*1.3)*(.5+B);",
+" vec3 c1=vec3(sin(T*.37)*1.45,cos(T*.29)*.55,cos(T*.37)*.7);",
+" vec3 c2=vec3(cos(T*.23)*1.1,sin(T*.41)*.9,sin(T*.23)*.8);",
+" d=smin(d,length(p-c1)-.32-B*.05,.55);",
+" d=smin(d,length(p-c2)-.22,.45);",
+" return d;}",
+"vec3 nrm(vec3 p){vec2 e=vec2(.002,0.);return normalize(vec3(map(p+e.xyy)-map(p-e.xyy),map(p+e.yxy)-map(p-e.yxy),map(p+e.yyx)-map(p-e.yyx)));}",
+"vec3 iri(float t){t=fract(t)*4.;vec3 a=vec3(.45,.92,1.),b=vec3(.55,.42,1.),c=vec3(1.,.35,.82),d=vec3(1.,.66,.48);",
+" vec3 r=mix(a,b,smoothstep(0.,1.,t));r=mix(r,c,smoothstep(1.,2.,t));r=mix(r,d,smoothstep(2.,3.,t));return mix(r,a,smoothstep(3.,4.,t));}",
+"vec3 env(vec3 d){float y=d.y*.5+.5;vec3 c=mix(vec3(.02,.02,.05),vec3(.09,.08,.18),y);",
+" c+=vec3(.9,.95,1.)*pow(max(0.,dot(d,normalize(vec3(.4,.8,.3)))),24.)*1.6;",
+" c+=iri(H+.1)*pow(max(0.,dot(d,normalize(vec3(-.8,.1,.4)))),6.)*.6;",
+" c+=iri(H+.5)*pow(max(0.,dot(d,normalize(vec3(.6,-.5,-.6)))),5.)*.5;",
+" vec2 tu=vec2(atan(d.x,-d.z)/6.2831+.5,clamp(.5-d.y*.5,0.,1.));vec3 ph=texture2D(TX,tu).rgb;",
+" return mix(c,ph*1.1+c*.5,.42);}",
+"float h21(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5);}",
+"void main(){",
+" vec2 uv=(gl_FragCoord.xy-.5*R)/R.y;",
+" float sh=R.x>R.y*1.1?-.42:0.;uv.x+=sh;if(R.x<R.y)uv.y-=.12;uv.y+=S*.25;",
+" vec3 ro=vec3(0.,0.,R.x>R.y*1.1?4.1:4.6),rd=normalize(vec3(uv,-1.45));",
+" float t=0.,d;bool hit=false;",
+" for(int i=0;i<72;i++){d=map(ro+rd*t);if(d<.0015){hit=true;break;}t+=d*.85;if(t>8.)break;}",
+" vec3 col;",
+" vec2 q=gl_FragCoord.xy/R;",
+" float stars=step(.9975,h21(floor(gl_FragCoord.xy*.5)))*.7;",
+" col=vec3(.012,.014,.028)+stars*vec3(.7,.8,1.);",
+" col+=iri(H)*.06*exp(-length(uv)*1.6)*(1.+B*1.5);",
+" if(hit){vec3 p=ro+rd*t,n=nrm(p);float f=pow(1.-max(0.,dot(n,-rd)),2.2);",
+"  vec3 r=reflect(rd,n);vec3 film=iri(H+f*.9+n.y*.25+dot(n,vec3(.3,.2,.1)));",
+"  col=env(r)*mix(vec3(.85),film,.75);",
+"  col+=film*f*.9;col+=iri(H+.3)*B*.25*f;}",
+" col*=1.-.25*length(q-.5);",
+" col+=(h21(gl_FragCoord.xy+T)-.5)*.04;",
+" col=pow(col,vec3(.9));",
+" gl_FragColor=vec4(col,1.);}"
+].join("\n");
+var glOK=false,prog;
+function sh(type,src){var s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){console.warn(gl.getShaderInfoLog(s));return null;}return s;}
+if(gl){
+  var v=sh(gl.VERTEX_SHADER,VS),f=sh(gl.FRAGMENT_SHADER,FS);
+  if(v&&f){prog=gl.createProgram();gl.attachShader(prog,v);gl.attachShader(prog,f);gl.linkProgram(prog);
+    if(gl.getProgramParameter(prog,gl.LINK_STATUS)){glOK=true;gl.useProgram(prog);
+      var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+      var loc=gl.getAttribLocation(prog,"p");gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+      ["R","T","B","H","M","S","MO","TX"].forEach(function(n){U[n]=gl.getUniformLocation(prog,n)});
+      var tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([60,40,90,255]));
+      [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(function(w){gl.texParameteri(gl.TEXTURE_2D,w,gl.CLAMP_TO_EDGE)});
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      gl.uniform1i(U.TX,0);
+      var timg=new Image();timg.onload=function(){try{gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,timg);}catch(e){}};timg.src="img/prism-portrait.jpg";}}
+}
+if(!glOK){cv.style.background="radial-gradient(60% 60% at 70% 45%,#7b6cff55,#ff7ad933 40%,transparent 70%),#05060a";}
+var scale=1;
+function resize(){
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  scale=(innerWidth<700?.5:.62)*dpr;
+  cv.width=Math.max(1,innerWidth*scale|0);cv.height=Math.max(1,innerHeight*scale|0);
+  if(glOK)gl.viewport(0,0,cv.width,cv.height);
+}
+resize();addEventListener("resize",resize);
+addEventListener("pointermove",function(e){state.tmx=(e.clientX/innerWidth-.5);state.tmy=(e.clientY/innerHeight-.5);},{passive:true});
+
+/* ---------- Audio engine (site ambience, generated live) ---------- */
+var ac=null,master,analyser,fdata,nextT=0,step=0,BPM=122,timer=null,lastKick=-9,playing=false,root=45,noiseBuf;
+function mtof(m){return 440*Math.pow(2,(m-69)/12)}
+function initAudio(){
+  var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;
+  ac=new AC();
+  var comp=ac.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;
+  master=ac.createGain();master.gain.value=.0;
+  analyser=ac.createAnalyser();analyser.fftSize=128;analyser.smoothingTimeConstant=.75;fdata=new Uint8Array(analyser.frequencyBinCount);
+  master.connect(comp);comp.connect(analyser);analyser.connect(ac.destination);
+  noiseBuf=ac.createBuffer(1,ac.sampleRate*.5,ac.sampleRate);var d=noiseBuf.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  return true;
+}
+function kick(t){var o=ac.createOscillator(),g=ac.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(42,t+.11);
+  g.gain.setValueAtTime(1,t);g.gain.exponentialRampToValueAtTime(.001,t+.42);o.connect(g);g.connect(master);o.start(t);o.stop(t+.45);lastKick=t;}
+function hat(t,v,dec){var s=ac.createBufferSource();s.buffer=noiseBuf;var hp=ac.createBiquadFilter();hp.type="highpass";hp.frequency.value=7500;var g=ac.createGain();
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+dec);s.connect(hp);hp.connect(g);g.connect(master);s.start(t);s.stop(t+dec+.02);}
+function bass(t,n,len){var o=ac.createOscillator(),lp=ac.createBiquadFilter(),g=ac.createGain();o.type="sawtooth";o.frequency.value=mtof(n);
+  lp.type="lowpass";lp.frequency.setValueAtTime(900,t);lp.frequency.exponentialRampToValueAtTime(160,t+len);lp.Q.value=6;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.32,t+.01);g.gain.exponentialRampToValueAtTime(.001,t+len);
+  o.connect(lp);lp.connect(g);g.connect(master);o.start(t);o.stop(t+len+.05);}
+function pad(t,notes,len){var lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.setValueAtTime(500,t);lp.frequency.linearRampToValueAtTime(1600,t+len*.5);lp.frequency.linearRampToValueAtTime(600,t+len);
+  var g=ac.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.055,t+len*.35);g.gain.linearRampToValueAtTime(0,t+len);lp.connect(g);g.connect(master);
+  notes.forEach(function(n){[-6,6].forEach(function(dt){var o=ac.createOscillator();o.type="sawtooth";o.frequency.value=mtof(n);o.detune.value=dt;o.connect(lp);o.start(t);o.stop(t+len+.05);});});}
+function schedule(){
+  var spb=60/BPM/4;
+  while(nextT<ac.currentTime+.12){
+    var s=step%16,bar=Math.floor(step/16);
+    if(s%4===0)kick(nextT);
+    if(s%4===2)hat(nextT,.16,.06);
+    if(s%2===1&&Math.random()<.35)hat(nextT,.05,.03);
+    if([2,6,10,11,14].indexOf(s)>-1)bass(nextT,root+12+(s===11?7:s===14?3:0),spb*1.6);
+    if(s===0&&bar%2===0)pad(nextT,[root+24,root+27,root+31,root+34],spb*32);
+    nextT+=spb;step++;
+  }
+}
+function startAudio(){
+  if(!ac&&!initAudio())return;
+  if(ac.state==="suspended")ac.resume();
+  nextT=ac.currentTime+.05;step=0;
+  master.gain.cancelScheduledValues(ac.currentTime);master.gain.setValueAtTime(master.gain.value,ac.currentTime);master.gain.linearRampToValueAtTime(.55,ac.currentTime+1.2);
+  timer=setInterval(schedule,25);playing=true;
+}
+function stopAudio(){if(!ac)return;clearInterval(timer);master.gain.cancelScheduledValues(ac.currentTime);master.gain.setValueAtTime(master.gain.value,ac.currentTime);master.gain.linearRampToValueAtTime(0,ac.currentTime+.4);playing=false;}
+var eng=document.getElementById("engage"),engT=document.getElementById("engage-t"),barsEl=eng.querySelectorAll(".bars i");
+eng.addEventListener("click",function(){
+  if(playing){stopAudio();eng.classList.remove("on");eng.setAttribute("aria-pressed","false");engT.textContent="Engage sound";}
+  else{startAudio();eng.classList.add("on");eng.setAttribute("aria-pressed","true");engT.textContent="Sound on";}
+});
+
+/* ---------- Tuner ---------- */
+var strip=document.getElementById("strip"),dial=document.getElementById("dial"),GAP=150,idx=0,pos=0,posT=0;
+var specEl=document.getElementById("spectrum"),specBars=[];
+for(var i=0;i<40;i++){var e=document.createElement("i");specEl.appendChild(e);specBars.push(e);}
+function fq(i){return (88+i*1.5).toFixed(1)}
+for(var k=-4;k<stations.length*10+4;k++){
+  var x=k*GAP/10,tk=document.createElement("div");tk.className="tick"+(k%10===0?" major":"");tk.style.left=x+"px";strip.appendChild(tk);
+  if(k%10===0&&k>=0&&k/10<stations.length){var n=document.createElement("div");n.className="tnum";n.style.left=x+"px";n.textContent=fq(k/10);strip.appendChild(n);}
+}
+var btns=stations.map(function(s,i){var b=document.createElement("button");b.type="button";b.className="station";b.style.left=(i*GAP)+"px";b.textContent=s.t;b.tabIndex=-1;
+  b.addEventListener("click",function(){select(i)});strip.appendChild(b);return b;});
+var nowEl=document.querySelector(".now"),bgImgs=nowEl.querySelectorAll(".now-bg img"),bgI=0,curImg=null;
+var E={title:document.getElementById("st-title"),len:document.getElementById("st-len"),plays:document.getElementById("st-plays"),src:document.getElementById("st-src"),ch:document.getElementById("st-ch"),fq:document.getElementById("fq"),link:document.getElementById("st-link"),status:document.getElementById("dial-status")};
+function select(i,fromDrag){
+  i=Math.max(0,Math.min(stations.length-1,i));var s=stations[i],changed=i!==idx;idx=i;posT=i*GAP;
+  btns.forEach(function(b,j){b.classList.toggle("active",j===i)});
+  decode(E.title,s.t,550);E.len.textContent=s.len;E.plays.textContent=s.plays;E.src.textContent=s.src;
+  E.ch.textContent=String(i+1).padStart(2,"0")+" / "+stations.length;E.fq.textContent=fq(i);
+  var onSp=s.src.indexOf("Spotify")>-1;E.link.href=onSp?SP:SC;E.link.textContent=onSp?"▶ Play on Spotify":"▶ Play on SoundCloud";
+  E.status.innerHTML="Locked on <b>"+s.t+"</b>";
+  dial.setAttribute("aria-valuenow",i+1);dial.setAttribute("aria-valuetext",s.t);
+  state.hueT=s.hue;if(changed)state.morph=1;root=s.root;
+  if(s.img&&s.img!==curImg){curImg=s.img;var nx=bgImgs[bgI^1],cu=bgImgs[bgI];nx.onload=function(){nx.classList.add("show");cu.classList.remove("show");};nx.src=s.img;bgI^=1;
+    if(!reduce){nowEl.classList.remove("glitch");void nowEl.offsetWidth;nowEl.classList.add("glitch");}}
+}
+document.getElementById("prev").addEventListener("click",function(){select(idx-1)});
+document.getElementById("next").addEventListener("click",function(){select(idx+1)});
+dial.addEventListener("keydown",function(e){if(e.key==="ArrowLeft"){select(idx-1);e.preventDefault();}if(e.key==="ArrowRight"){select(idx+1);e.preventDefault();}});
+var drag=null;
+dial.addEventListener("pointerdown",function(e){if(e.target.classList.contains("station"))return;drag={x:e.clientX,p:pos,moved:false};dial.setPointerCapture(e.pointerId);});
+dial.addEventListener("pointermove",function(e){if(!drag)return;var dx=e.clientX-drag.x;if(Math.abs(dx)>3)drag.moved=true;posT=Math.max(0,Math.min((stations.length-1)*GAP,drag.p-dx));
+  var near=Math.round(posT/GAP);if(near!==idx){idx=-1;select(near,true);posT=Math.max(0,Math.min((stations.length-1)*GAP,drag.p-dx));}});
+function endDrag(){if(!drag)return;drag=null;select(Math.round(posT/GAP));}
+dial.addEventListener("pointerup",endDrag);dial.addEventListener("pointercancel",endDrag);
+dial.addEventListener("wheel",function(e){if(Math.abs(e.deltaX)>Math.abs(e.deltaY)){e.preventDefault();posT=Math.max(0,Math.min((stations.length-1)*GAP,posT+e.deltaX));clearTimeout(dial._w);dial._w=setTimeout(function(){select(Math.round(posT/GAP))},120);}},{passive:false});
+idx=-1;select(0);
+
+/* ---------- Footage ---------- */
+var shots=[
+ ["beach-violet","Beach set · violet hour","s-a"],["road-mustang","Roadside","s-b"],["tunnel","Light tunnel","s-c"],
+ ["studio-attic","The red attic","s-c"],["painting","Painting in the woods","s-b"],
+ ["long-road","The long road","s-d"],["prism-portrait","Prism","s-e"],["night-portrait","After hours","s-c"],
+ ["beach-blue","Beach set · open sky","s-f"],["fence-side","Super 8","s-f"],["beach-grey","Beach set · overcast","s-f"],
+ ["river","Riverside","s-e"],["sofa","Downtime","s-e"],["fence-front","Super 8 · take two","s-c"]
+];
+var reel=document.getElementById("reel");
+shots.forEach(function(sh,i){var b=document.createElement("button");b.type="button";b.className="frame "+sh[2];
+  b.setAttribute("aria-label","Open photo: "+sh[1]);
+  b.innerHTML='<img src="img/'+sh[0]+'.jpg" alt="'+sh[1]+'" loading="lazy"><span class="crn"></span><span class="tag"><span>FRM '+String(i+1).padStart(2,"0")+'</span><span>'+sh[1]+'</span></span>';
+  b.addEventListener("click",function(){openLb(i)});reel.appendChild(b);});
+var lb=document.getElementById("lb"),lbImg=document.getElementById("lb-img"),lbCap=document.getElementById("lb-cap"),lbN=document.getElementById("lb-n"),lbI=0,lbFrom=null;
+function showLb(i){lbI=(i+shots.length)%shots.length;var sh=shots[lbI];lbImg.src="img/"+sh[0]+".jpg";lbImg.alt=sh[1];lbCap.innerHTML="FRM "+String(lbI+1).padStart(2,"0")+" · <b>"+sh[1]+"</b>";lbN.textContent=(lbI+1)+" / "+shots.length;
+  if(!reduce){lbImg.classList.remove("in");void lbImg.offsetWidth;lbImg.classList.add("in");}}
+function openLb(i){lbFrom=document.activeElement;showLb(i);lb.hidden=false;document.body.style.overflow="hidden";document.getElementById("lb-x").focus();}
+function closeLb(){lb.hidden=true;document.body.style.overflow="";if(lbFrom)lbFrom.focus();}
+document.getElementById("lb-x").addEventListener("click",closeLb);
+document.getElementById("lb-p").addEventListener("click",function(){showLb(lbI-1)});
+document.getElementById("lb-nx").addEventListener("click",function(){showLb(lbI+1)});
+lb.addEventListener("click",function(e){if(e.target===lb||e.target.classList.contains("lb-stage"))closeLb();});
+addEventListener("keydown",function(e){if(lb.hidden)return;if(e.key==="Escape")closeLb();if(e.key==="ArrowLeft")showLb(lbI-1);if(e.key==="ArrowRight")showLb(lbI+1);});
+var roadImg=document.getElementById("roadimg"),roadSec=roadImg.parentNode;
+
+/* ---------- Loop ---------- */
+var t0=performance.now(),clock=document.getElementById("clock"),heading=document.getElementById("heading");
+function frame(now){
+  var T=(now-t0)/1000;
+  state.mx+=(state.tmx-state.mx)*.05;state.my+=(state.tmy-state.my)*.05;
+  state.hue+=(state.hueT-state.hue)*.04;state.morph*=.96;
+  state.scroll=Math.min(1,scrollY/Math.max(1,innerHeight*2));
+  var beat;
+  if(playing&&ac){beat=Math.exp(-Math.max(0,ac.currentTime-lastKick)*7);analyser.getByteFrequencyData(fdata);}
+  else beat=.35*Math.pow(.5+.5*Math.cos(T*Math.PI*2*BPM/60),6);
+  state.beat+=(beat-state.beat)*.5;
+  for(var i=0;i<specBars.length;i++){var v=playing&&fdata?fdata[i+1]/255:(.08+.1*Math.abs(Math.sin(T*1.3+i*.5)));specBars[i].style.height=(4+v*96)+"%";}
+  if(playing&&fdata){barsEl.forEach(function(b,i){b.style.height=(3+fdata[2+i*4]/255*9)+"px"})}else barsEl.forEach(function(b){b.style.height="3px"});
+  if(!reduce){var rr=roadSec.getBoundingClientRect();if(rr.bottom>0&&rr.top<innerHeight){var k=(rr.top+rr.height/2-innerHeight/2)/innerHeight;roadImg.style.transform="translateY("+(k*-8)+"%)";}}
+  pos+=(posT-pos)*.18;strip.style.transform="translateX("+(-pos)+"px)";
+  var s=Math.floor(T);clock.textContent=[s/3600|0,(s/60|0)%60,s%60].map(function(n){return String(n).padStart(2,"0")}).join(":");
+  heading.textContent=String(Math.round((T*7+state.mx*90+360)%360)).padStart(3,"0")+"°";
+  if(glOK){gl.uniform2f(U.R,cv.width,cv.height);gl.uniform1f(U.T,reduce?2.0:T);gl.uniform1f(U.B,state.beat);gl.uniform1f(U.H,state.hue);gl.uniform1f(U.M,state.morph);gl.uniform1f(U.S,state.scroll);gl.uniform2f(U.MO,state.mx,state.my);gl.drawArrays(gl.TRIANGLES,0,3);}
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
