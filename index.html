@@ -173,18 +173,26 @@ h2{font-family:var(--display);font-weight:900;font-size:clamp(36px,6vw,84px);let
 .studio figcaption{position:absolute;left:12px;bottom:10px}
 
 /* footage gallery */
-.reel{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-rows:clamp(90px,11vw,150px);gap:12px}
-.frame{position:relative;overflow:hidden;border:1px solid var(--edge);border-radius:2px;background:#0b0c12;cursor:zoom-in;padding:0;color:inherit;font:inherit;text-align:left}
-.frame img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1) contrast(1.15) brightness(.85);transform:scale(1.04);transition:filter .5s,transform .7s}
-.frame::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(140deg,var(--ion),#7b5cff 45%,var(--flare));mix-blend-mode:color;opacity:.85;transition:opacity .5s;pointer-events:none}
-.frame:hover img,.frame:focus-visible img{filter:none;transform:scale(1)}
-.frame:hover::before,.frame:focus-visible::before{opacity:0}
-.frame .tag{position:absolute;left:10px;bottom:8px;right:10px;z-index:2;display:flex;justify-content:space-between;gap:8px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);text-shadow:0 1px 6px rgba(0,0,0,.8)}
-.frame .crn{position:absolute;inset:8px;z-index:2;pointer-events:none;
-  background:linear-gradient(var(--ink),var(--ink)) top left/10px 1px,linear-gradient(var(--ink),var(--ink)) top left/1px 10px,
-             linear-gradient(var(--ink),var(--ink)) top right/10px 1px,linear-gradient(var(--ink),var(--ink)) top right/1px 10px;background-repeat:no-repeat;opacity:.7}
-.s-a{grid-column:span 5;grid-row:span 4}.s-b{grid-column:span 4;grid-row:span 2}.s-c{grid-column:span 3;grid-row:span 2}
-.s-d{grid-column:span 7;grid-row:span 3}.s-e{grid-column:span 3;grid-row:span 3}.s-f{grid-column:span 4;grid-row:span 3}
+.notes{display:flex;flex-direction:column;gap:clamp(72px,11vw,150px)}
+.note{display:flex;flex-direction:column;gap:22px;width:min(100%,600px)}
+.note.wide{width:min(100%,920px)}
+.note:nth-child(even){margin-left:auto}
+.frame{position:relative;display:block;width:100%;overflow:hidden;border:1px solid var(--edge);border-radius:2px;background:#0b0c12;cursor:zoom-in;padding:0;color:inherit;font:inherit}
+.frame img{width:100%;height:auto;max-height:86vh;object-fit:cover;display:block;filter:grayscale(1) contrast(1.15) brightness(.85);transform:scale(1.03);transition:filter 1.1s ease,transform 1.4s ease}
+.frame::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(140deg,var(--ion),#7b5cff 45%,var(--flare));mix-blend-mode:color;opacity:.85;transition:opacity 1.1s ease;pointer-events:none}
+.note.lit .frame img,.frame:hover img,.frame:focus-visible img{filter:none;transform:scale(1)}
+.note.lit .frame::before,.frame:hover::before,.frame:focus-visible::before{opacity:0}
+.frame .crn{position:absolute;inset:10px;z-index:2;pointer-events:none;
+  background:linear-gradient(var(--ink),var(--ink)) top left/12px 1px,linear-gradient(var(--ink),var(--ink)) top left/1px 12px,
+             linear-gradient(var(--ink),var(--ink)) top right/12px 1px,linear-gradient(var(--ink),var(--ink)) top right/1px 12px,
+             linear-gradient(var(--ink),var(--ink)) bottom left/12px 1px,linear-gradient(var(--ink),var(--ink)) bottom left/1px 12px,
+             linear-gradient(var(--ink),var(--ink)) bottom right/12px 1px,linear-gradient(var(--ink),var(--ink)) bottom right/1px 12px;background-repeat:no-repeat;opacity:.75}
+.frame .rec{position:absolute;top:16px;right:20px;z-index:2;font-size:10px;letter-spacing:.2em;color:var(--ink);display:flex;align-items:center;gap:6px;text-shadow:0 1px 6px rgba(0,0,0,.7)}
+.frame .rec i{width:6px;height:6px;border-radius:50%;background:var(--flare);box-shadow:0 0 8px var(--flare)}
+.cap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 22px;padding:18px 20px;border:1px solid var(--edge);border-radius:2px;background:rgba(8,9,15,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.cap .num{grid-row:span 2;font-family:var(--display);font-weight:300;font-size:clamp(22px,2.6vw,32px);color:var(--ion);line-height:1;font-variant-numeric:tabular-nums}
+.cap h3{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(18px,2vw,24px);letter-spacing:-.01em;line-height:1.15}
+.cap p{margin:4px 0 0;color:#c2c8d6;font-size:15px;line-height:1.65;max-width:52ch}
 
 .lb{position:fixed;inset:0;z-index:20;background:rgba(5,6,10,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)}
 .lb-top,.lb-bot{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1280px;width:100%;margin:0 auto}
@@ -195,9 +203,8 @@ h2{font-family:var(--display);font-weight:900;font-size:clamp(36px,6vw,84px);let
 .lb button:hover{border-color:var(--ion)}
 
 @media (max-width:820px){
-  .reel{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:clamp(150px,52vw,260px)}
-  .reel .frame{grid-column:span 1;grid-row:span 1}
-  .reel .frame:nth-child(5n+1){grid-column:span 2}
+  .note,.note.wide{width:100%}
+  .cap{gap:6px 14px}
   .idcard{display:none}
 }
 
@@ -333,10 +340,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   <section id="footage" aria-labelledby="ft-h">
     <div class="wrap">
       <div class="sec-top">
-        <div><span class="label">03 · Field footage</span><h2 id="ft-h">Recovered <span class="iri">frames</span></h2></div>
-        <span class="label">Hover to restore colour · tap to open</span>
+        <div><span class="label">03 · Field notes</span><h2 id="ft-h">Notes from <span class="iri">the road</span></h2></div>
+        <span class="label">Scroll to restore colour · tap to open</span>
       </div>
-      <div class="reel" id="reel"></div>
+      <div class="notes" id="reel"></div>
     </div>
   </section>
 
@@ -577,17 +584,30 @@ idx=-1;select(0);
 
 /* ---------- Footage ---------- */
 var shots=[
- ["beach-violet","Beach set · violet hour","s-a"],["road-mustang","Roadside","s-b"],["tunnel","Light tunnel","s-c"],
- ["studio-attic","The red attic","s-c"],["painting","Painting in the woods","s-b"],
- ["long-road","The long road","s-d"],["prism-portrait","Prism","s-e"],["night-portrait","After hours","s-c"],
- ["beach-blue","Beach set · open sky","s-f"],["fence-side","Super 8","s-f"],["beach-grey","Beach set · overcast","s-f"],
- ["river","Riverside","s-e"],["sofa","Downtime","s-e"],["fence-front","Super 8 · take two","s-c"]
+ ["beach-violet","Violet hour","I set up wherever the horizon is widest. The sea keeps better time than any metronome.",0],
+ ["painting","Painting in the woods","Most of my ideas start in nature. A colour, light through the leaves, moss under my feet. I try to turn that feeling into sound.",0],
+ ["studio-attic","The red attic","This is where tracks get finished. A laptop, a candle, an open window and no clock on the wall.",0],
+ ["long-road","The long road","I don't know where we're going, and that's the point. Every track is a road I haven't driven yet.",1],
+ ["road-mustang","Roadside","Some songs come out of silence. Pull over, turn the engine off and listen to what's left.",1],
+ ["tunnel","Light tunnel","On a good night the room disappears. Only light, bass and the people moving through it.",0],
+ ["prism-portrait","Prism","Close your eyes and the colours get louder. That's the feeling I chase in every mix.",0],
+ ["beach-grey","Overcast","Grey sky, cold hands, warm bass. Deep house hits hardest when the weather doesn't cooperate.",0],
+ ["beach-blue","Open sky","No crowd, no booth. Just the decks, the wind and whoever happens to walk by.",0],
+ ["fence-front","Super 8","I collect moments the way I collect samples: old cameras, voice notes, anything that keeps a trace.",0],
+ ["fence-side","Take two","Nothing worth keeping gets recorded only once.",0],
+ ["river","Riverside","Cities have a rhythm too. I walk until I find the groove, then I go home and build it.",0],
+ ["night-portrait","After hours","The best ideas show up after midnight, when I'm half asleep and still humming the last track.",0],
+ ["sofa","Downtime","Rest is part of the process. The silence between tracks matters as much as the tracks.",0]
 ];
 var reel=document.getElementById("reel");
-shots.forEach(function(sh,i){var b=document.createElement("button");b.type="button";b.className="frame "+sh[2];
-  b.setAttribute("aria-label","Open photo: "+sh[1]);
-  b.innerHTML='<img src="img/'+sh[0]+'.jpg" alt="'+sh[1]+'" loading="lazy"><span class="crn"></span><span class="tag"><span>FRM '+String(i+1).padStart(2,"0")+'</span><span>'+sh[1]+'</span></span>';
-  b.addEventListener("click",function(){openLb(i)});reel.appendChild(b);});
+shots.forEach(function(sh,i){
+  var n=String(i+1).padStart(2,"0"),art=document.createElement("article");art.className="note"+(sh[3]?" wide":"");
+  art.innerHTML='<button type="button" class="frame" aria-label="Open photo: '+sh[1]+'"><img src="img/'+sh[0]+'.jpg" alt="'+sh[1]+'" loading="lazy"><span class="crn"></span><span class="rec label"><i></i>FRM '+n+'</span></button>'+
+    '<div class="cap"><span class="num">'+n+'</span><h3>'+sh[1]+'</h3><p>'+sh[2]+'</p></div>';
+  art.querySelector(".frame").addEventListener("click",function(){openLb(i)});reel.appendChild(art);});
+if(reduce||!("IntersectionObserver" in window)){reel.querySelectorAll(".note").forEach(function(n){n.classList.add("lit")});}
+else{var io=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle("lit",e.isIntersecting)})},{rootMargin:"-30% 0px -30% 0px"});
+  reel.querySelectorAll(".note").forEach(function(n){io.observe(n)});}
 var lb=document.getElementById("lb"),lbImg=document.getElementById("lb-img"),lbCap=document.getElementById("lb-cap"),lbN=document.getElementById("lb-n"),lbI=0,lbFrom=null;
 function showLb(i){lbI=(i+shots.length)%shots.length;var sh=shots[lbI];lbImg.src="img/"+sh[0]+".jpg";lbImg.alt=sh[1];lbCap.innerHTML="FRM "+String(lbI+1).padStart(2,"0")+" · <b>"+sh[1]+"</b>";lbN.textContent=(lbI+1)+" / "+shots.length;
   if(!reduce){lbImg.classList.remove("in");void lbImg.offsetWidth;lbImg.classList.add("in");}}
